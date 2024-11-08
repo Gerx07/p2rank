@@ -38,3 +38,16 @@ Has chain discontinuity in A (381 -> 391)
 ATOM   3079  OXT GLY A 381      64.521  55.076  19.009  1.00 77.68           O  
 ATOM   3080  N   PRO A 391      68.265  37.617  23.247  1.00 83.53           N  
 ~~~
+
+
+
+
+# Parsing issues
+
+
+## 4gqq_updated.cif
+
+4gqq_updated.cif ... in 2.5 causing org.rcsb.cif.EmptyColumnException: column label_comp_id is undefined
+
+
+
