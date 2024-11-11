@@ -22,7 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.5'
+version = '2.5.1-dev.1'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -167,7 +167,7 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.23'
+    implementation 'org.apache.groovy:groovy:4.0.24'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
