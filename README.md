@@ -9,7 +9,7 @@ Ligand-binding site prediction based on machine learning.
 </p>
 
 [![version 2.5](https://img.shields.io/badge/release-2.5-green.svg)](https://github.com/rdk/p2rank/releases)
-[![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](/actions)
+[![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 ![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
 <a href="https://bit.ly/x-rdkbio-p2rank-readme"><img src="https://img.shields.io/static/v1?label=follow&message=@rdkbio&color=black"></img></a>
