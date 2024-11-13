@@ -20,7 +20,7 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
 It achieves high prediction success rates without relying on an external software for computation of complex features 
 or on a database of known protein-ligand templates. 
            
-### 📰 What's new?
+### ✨ What's new?
   
 * Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
