@@ -115,8 +115,8 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
        * Use `-vis_renderers 'pymol,chimerax'` to toggle specific renderers on/off.
        * Use `-vis_copy_proteins 0` to prevent copying protein structures to the visualizations directory (faster, but visualizations won't be portable). 
    * **SAS points data**: coordinates and ligandability scores for solvent-accessible surface (SAS) points are saved in `visualizations/data/{struct_file}_points.pdb.gz`. Here:
-     * Residue sequence number (position 23-26 in the HETATM record) represents the pocket rank (with 0 indicating no pocket).
-     * B-factor column indicates the ligandability score.
+     * Residue sequence number (position 23-26) represents the pocket rank (0 indicates no pocket).
+     * B-factor column contains predicted ligandability score.
 
 
 ### Configuration
