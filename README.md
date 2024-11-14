@@ -189,7 +189,7 @@ Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 
 ### Evaluate prediction and rescoring models
 
-Use following commands to calculate prediction metrics (DCA, DCC, ...) for structures files where the ligands are present.
+Use following commands to calculate prediction metrics (prediction success rates using DCA, DCC, ...) on structure files, where the ligands are present.
 
 ~~~ruby
 prank eval-predict -f test_data/1fbl.pdb         # evaluate default prediction model on a single file
