@@ -16,11 +16,10 @@ Ligand-binding site prediction based on machine learning.
 
 ### Description
 
-P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. 
-It achieves high prediction success rates without relying on an external software for computation of complex features 
-or on a database of known protein-ligand templates. 
+P2Rank is a stand-alone command-line program for fast and accurate prediction of ligand-binding sites from protein structures. 
+It achieves high prediction success rates without relying on external software for computation of complex features or on a database of known protein-ligand templates.
            
-### 📰 What's new?
+### ✨ What's new?
   
 * Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
@@ -52,8 +51,8 @@ See more usage examples below...
 ### Algorithm
 
 P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. 
-Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. 
-For more details see the slides and publications.
+Ligandability score of individual points is determined by a machine learning model trained on a dataset of known protein-ligand complexes. 
+For more details, see the slides and publications.
 
 Presentation slides introducing the original version of the algorithm: [Slides (pdf)](https://bit.ly/p2rank-slides)  
 
@@ -107,17 +106,17 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Prediction output 
 
-   For each structure file `{struct_file}` in the dataset, P2Rank produces several output files:
-   * `{struct_file}_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
-   of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site.
-   * `{struct_file}_residues.csv`: contains a list of all residues from the input protein with their scores, 
-   mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue.
-   * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`).
-     * Generating visualizations can be turned off with the `-visualizations 0` parameter.
-     * `-vis_renderers 'pymol,chimerax'` parameter can be used to turn individual visualization renderers on/off. 
-     * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster, but visualizations won't be portable).
-     * Coordinates and ligandability scores of SAS points can be found in `visualizations/data/{struct_file}_points.pdb.gz`. Here, the "Residue sequence number" (23-26 of HETATM record)
-       is the rank of the corresponding pocket (0 means the point doesn't belong to any pocket) and the b-factor column corresponds to the ligandability score.
+   For each structure file `{struct_file}` in the dataset, P2Rank generates several output files:
+   * `{struct_file}_predictions.csv`: lists **predicted pockets** in order of score, including each pocket's score, center coordinates, adjacent residues, adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site.
+   * `{struct_file}_residues.csv`: lists **all residues** from the input protein along with their scores, mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue.
+   * **PyMol and ChimeraX visualizations**: `.pml` and `.cxc` scripts in `visualizations/` directory  with additional files in `data/`.
+     * Optional settings:
+       * Use `-visualizations 0` to disable visualization generation.
+       * Use `-vis_renderers 'pymol,chimerax'` to toggle specific renderers on/off.
+       * Use `-vis_copy_proteins 0` to prevent copying protein structures to the visualizations directory (faster, but visualizations won't be portable). 
+   * **SAS points data**: coordinates and ligandability scores for solvent-accessible surface (SAS) points are saved in `visualizations/data/{struct_file}_points.pdb.gz`. Here:
+     * Residue sequence number (position 23-26) represents the pocket rank (0 indicates no pocket).
+     * B-factor column contains predicted ligandability score.
 
 
 ### Configuration
@@ -143,13 +142,6 @@ To see the complete commented list of all (including undocumented)
 parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
 
 
-### Evaluate prediction model
-...on a file or a dataset with known ligands.
-
-~~~ruby
-prank eval-predict -f test_data/1fbl.pdb
-prank eval-predict test.ds
-~~~
 
 ### Rescoring (PRANK algorithm)
 
@@ -174,8 +166,6 @@ Rescoring output:
 prank rescore fpocket.ds                   
 prank rescore fpocket.ds -o output_here   # explicitly specify output directory
 prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model (recommended for alphafold models)
-   
-prank eval-rescore fpocket.ds             # evaluate rescoring model on a dataset with known ligands
 ~~~
 
 For rescoring, the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
@@ -197,6 +187,18 @@ In this case, the dataset file can be a simple list of pdb/cif files since Fpock
 `prank fpocket-rescore` will produce `predictions.csv` as well, so it can be used as an in-place replacement for `prank predict` in most scenarios.
 Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 
+### Evaluate prediction and rescoring models
+
+Use following commands to calculate prediction metrics (prediction success rates using DCA, DCC, ...) on structure files, where the ligands are present.
+
+~~~ruby
+prank eval-predict -f test_data/1fbl.pdb         # evaluate default prediction model on a single file
+prank eval-predict              test.ds          # evaluate default prediction model on a dataset with known ligands
+prank eval-predict -c alphafold test.ds          # evaluate specific prediction model on a dataset with known ligands
+
+prank eval-rescore                 fpocket.ds    # evaluate default rescoring model on a dataset with known ligands
+prank eval-rescore -c rescore_2024 fpocket.ds    # evaluate specific rescoring model on a dataset with known ligands
+~~~
 
 
 ## 🏗️ Build from sources
