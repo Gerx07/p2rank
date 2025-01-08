@@ -5,7 +5,7 @@
 buildscript {  // for "com.github.ben-manes.versions" plugin
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
@@ -37,7 +37,7 @@ def distroDir = "$projectDir/distro"
 repositories {
     mavenCentral()
     mavenLocal()
-    maven {url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/" }
+    maven {url = "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/" }
     maven {
         url = file('lib/local-mvn-repo')
     }
@@ -119,12 +119,12 @@ test {
     }
 
     testLogging {
-        events "failed" // "standardOut", "standardError", "passed", "skipped"
+        //events = "failed" // "standardOut", "standardError", "passed", "skipped"
 
-        showExceptions true
-        exceptionFormat "full"
-        showCauses true
-        showStackTraces true
+        showExceptions = true
+        exceptionFormat = "full"
+        showCauses = true
+        showStackTraces = true
 
         showStandardStreams = false
     }
