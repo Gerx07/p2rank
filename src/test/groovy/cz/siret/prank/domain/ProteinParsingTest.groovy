@@ -2,6 +2,7 @@ package cz.siret.prank.domain
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 /**
@@ -13,12 +14,15 @@ class ProteinParsingTest {
 
     static final String DIR = 'src/test/resources/data/tricky_cases/parsing'
 
-
+    /**
+     * Test parsing PDBe specific "updates cifs"
+     */
+    @Disabled // until solved in BioJava
     @Test
     void testParsePdbeUpdatedCif() {
         Protein protein = Protein.load("$DIR/4gqq.cif")
 
-        Protein protein2 = Protein.load("$DIR/4gqq_updated.cif")   // failed in 2.5
+        Protein protein2 = Protein.load("$DIR/4gqq_updated.cif")   // failes in 2.5, still fails with BioJava 7.1.4
     }
 
     @Test
