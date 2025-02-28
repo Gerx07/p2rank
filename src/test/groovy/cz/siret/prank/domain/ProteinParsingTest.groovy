@@ -22,7 +22,7 @@ class ProteinParsingTest {
     void testParsePdbeUpdatedCif() {
         Protein protein = Protein.load("$DIR/4gqq.cif")
 
-        Protein protein2 = Protein.load("$DIR/4gqq_updated.cif")   // failes in 2.5, still fails with BioJava 7.1.4
+        Protein protein2 = Protein.load("$DIR/4gqq_updated.cif")   // fails in 2.5, still fails with BioJava 7.1.4 and 7.2.0
     }
 
     @Test
