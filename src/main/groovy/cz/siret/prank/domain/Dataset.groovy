@@ -17,6 +17,7 @@ import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.ErrorUtils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
@@ -1060,7 +1061,11 @@ class Dataset implements Parametrized, Writable, Failable {
             StringBuilder sb = new StringBuilder()
             sb.append("file (dataset.item.label), error (exception.message)\n")
             for (ItemError ie : errorItems) {
-                sb.append(ie.item.label).append(", ").append(ie.exception.message).append("\n")
+                String messages = ErrorUtils.getAllCauseMessages(ie.exception).join(" | ")
+                messages = messages.replace("\n", " ")
+                messages = messages.replace(",", " ")
+
+                sb.append(ie.item.label).append(", ").append(messages).append("\n")
             }
             Futils.writeFile(csvFile, sb.toString())
         }
