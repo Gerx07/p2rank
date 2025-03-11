@@ -1061,7 +1061,7 @@ class Dataset implements Parametrized, Writable, Failable {
             StringBuilder sb = new StringBuilder()
             sb.append("file (dataset.item.label), error (exception.message)\n")
             for (ItemError ie : errorItems) {
-                String messages = ErrorUtils.getAllCauseMessages(ie.exception).join(" | ")
+                String messages = ErrorUtils.getAllCauseMessagesWithClasses(ie.exception).join(" | ")
                 messages = messages.replace("\n", " ")
                 messages = messages.replace(",", " ")
 
