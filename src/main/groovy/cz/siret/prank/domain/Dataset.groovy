@@ -1078,8 +1078,8 @@ class Dataset implements Parametrized, Writable, Failable {
 
             try (Writer out = Futils.getGzipWriter(txtGzFile)) {
                 for (ItemError ie : errorItems) {
-                    out.write("Item: ${ie.item.label}\n")
-                    out.write(ErrorUtils.stackTraceToString(ie.exception))
+                    out.write("ITEM: ${ie.item.label}\n")
+                    out.write(ErrorUtils.fullStackTraceToString(ie.exception))
                     out.write("\n\n")
                 }
             }
