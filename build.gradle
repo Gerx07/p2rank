@@ -22,7 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.5.1-dev.2'
+version = '2.5.1-dev.3'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -167,7 +167,7 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.25'
+    implementation 'org.apache.groovy:groovy:4.0.26'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
@@ -189,9 +189,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.24.0' // 2.24.1-3 causes messy output at startup
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0'
 
-    implementation 'org.biojava:biojava-core:7.2.0'
-    implementation 'org.biojava:biojava-alignment:7.2.0'
-    implementation 'org.biojava:biojava-structure:7.2.0'
+    implementation 'org.biojava:biojava-core:7.2.1'
+    implementation 'org.biojava:biojava-alignment:7.2.1'
+    implementation 'org.biojava:biojava-structure:7.2.1'
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.10'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-silent:2.10'           // for Atom class
