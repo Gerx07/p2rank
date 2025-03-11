@@ -244,7 +244,8 @@ class Dataset implements Parametrized, Writable, Failable {
             processor.processItem(item)
 
         } catch (Exception e) {
-            result.errorItems.add(item)
+            item.cleanCaches()  // clear caches to free memory
+            result.addItemError(item, e)
 
             fail("error processing dataset item [$item.label]", e, log)
         }
@@ -844,12 +845,15 @@ class Dataset implements Parametrized, Writable, Failable {
 
         Item cleanCopy() {
             Item res = copy()
-            res.chains = null
-            res.apoChains = null
-            res.cachedPair = null
+            res.cleanCaches()
             return res
         }
 
+        void cleanCaches() {
+            chains = null
+            apoChains = null
+            cachedPair = null
+        }
 
         PredictionPair getPredictionPair() {
             PredictionPair res = null
@@ -1025,7 +1029,11 @@ class Dataset implements Parametrized, Writable, Failable {
      * summary of a dataset processing run
      */
     static class Result {
-        List<Item> errorItems = newSynchronizedList()
+        List<ItemError> errorItems = newSynchronizedList()
+
+        void addItemError(Item item, Exception e) {
+            errorItems.add(new ItemError(item, e))
+        }
 
         boolean hasErrors() {
             errorItems.size() > 0
@@ -1033,6 +1041,43 @@ class Dataset implements Parametrized, Writable, Failable {
 
         int getErrorCount() {
             errorItems.size()
+        }
+
+        String getErrorSummary() {
+            StringBuilder sb = new StringBuilder()
+            sb.append("Failed items: ${errorCount}\n")
+
+            // TODO show most frequent errors / messages
+
+            return sb.toString()
+        }
+
+        void writeItemErrorsToCsv(String csvFile) {
+            if (!hasErrors()) {
+                return
+            }
+
+            StringBuilder sb = new StringBuilder()
+            sb.append("file (dataset.item.label), error (exception.message)\n")
+            for (ItemError ie : errorItems) {
+                sb.append(ie.item.label).append(", ").append(ie.exception.message).append("\n")
+            }
+            Futils.writeFile(csvFile, sb.toString())
+        }
+
+    }
+
+    static class ItemError {
+        Item item
+        Exception exception
+
+        ItemError(Item item, Exception exception) {
+            this.item = item
+            this.exception = exception
+        }
+
+        public String getMessage() {
+            return exception.message
         }
     }
 

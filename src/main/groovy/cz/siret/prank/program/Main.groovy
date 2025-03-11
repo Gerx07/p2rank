@@ -280,8 +280,8 @@ class Main implements Parametrized, Writable {
             error = true
             write "ERROR on processing $result.errorCount file(s):"
 
-            for (Dataset.Item item : result.errorItems) {
-                write "    [$item.label]"
+            for (def itemError : result.errorItems) {
+                write "    [$itemError.item.label]"
             }
         }
     }

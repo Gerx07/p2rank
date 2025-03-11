@@ -169,7 +169,7 @@ class AnalyzeRoutine extends Routine {
         LoaderParams.ignoreLigandsSwitch = true
         
         StringBuffer csv = new StringBuffer("protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n")
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             int nchains = p.residueChains.size()
@@ -184,6 +184,11 @@ class AnalyzeRoutine extends Routine {
             csv << rows
         }
         writeFile "$outdir/chains.csv", csv
+
+        res.writeItemErrorsToCsv("$outdir/errors.csv")
+
+        write "Processed ${dataset.size} items"
+        write res.errorSummary
     }
 
     /**
