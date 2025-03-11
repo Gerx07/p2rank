@@ -186,6 +186,7 @@ class AnalyzeRoutine extends Routine {
         writeFile "$outdir/chains.csv", csv
 
         res.writeItemErrorsToCsv("$outdir/errors.csv")
+        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
 
         write "Processed ${dataset.size} items"
         write res.errorSummary

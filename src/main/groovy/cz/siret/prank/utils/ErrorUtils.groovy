@@ -29,4 +29,8 @@ class ErrorUtils {
         return ExceptionUtils.getRootCauseMessage(throwable)
     }
 
+    public static String stackTraceToString(Throwable throwable) {
+        return ExceptionUtils.getStackTrace(throwable)
+    }
+
 }

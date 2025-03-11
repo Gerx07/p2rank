@@ -23,6 +23,7 @@ import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
@@ -1068,6 +1069,20 @@ class Dataset implements Parametrized, Writable, Failable {
                 sb.append(ie.item.label).append(", ").append(messages).append("\n")
             }
             Futils.writeFile(csvFile, sb.toString())
+        }
+
+        void writeFullItemErrorsToFile(String txtGzFile) {
+            if (!hasErrors()) {
+                return
+            }
+
+            try (Writer out = Futils.getGzipWriter(txtGzFile)) {
+                for (ItemError ie : errorItems) {
+                    out.write("Item: ${ie.item.label}\n")
+                    out.write(ErrorUtils.stackTraceToString(ie.exception))
+                    out.write("\n\n")
+                }
+            }
         }
 
     }
