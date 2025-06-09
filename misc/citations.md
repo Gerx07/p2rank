@@ -22,7 +22,26 @@ If you use P2Rank, please cite relevant papers:
 }
 ~~~
 
-* [A new web-server article](https://doi.org/10.1093/nar/gkac389) about updates in the web interface [prankweb.cz](https://prankweb.cz)  
+* [Latest web-server article](https://doi.org/10.1093/nar/gkaf421) about updates in P2Rank and [prankweb.cz](https://prankweb.cz)
+ Polak L, Skoda P, Riedlova K, Krivak R, Novotny M, Hoksza D. ***PrankWeb 4: a modular web server for protein–ligand binding site prediction and downstream analysis.*** Nucleic Acids Research, 2025 May.
+~~~bibtex
+@article{prankweb4,
+    author = {Polák, Lukáš and Škoda, Petr and Riedlová, Kamila and Krivák, Radoslav and Novotný, Marian and Hoksza, David},
+    title = {PrankWeb 4: a modular web server for protein–ligand binding site prediction and downstream analysis},
+    journal = {Nucleic Acids Research},
+    pages = {gkaf421},
+    year = {2025},
+    month = {05},
+    abstract = {Knowledge of protein–ligand binding sites (LBSs) is crucial for advancing our understanding of biology and developing practical applications in fields such as medicine or biotechnology. PrankWeb is a web server that allows users to predict LBSs from a given three-dimensional structure. It provides access to P2Rank, a state-of-the-art machine learning tool for binding site prediction. Here, we present a new version of PrankWeb enabling the development of both client- and server-side modules acting as postprocessing tasks on the predicted pockets. Furthermore, each module can be associated with a visualization module that acts on the results provided by both client- and server-side modules. This newly developed system was utilized to implement the ability to dock user-provided molecules into the predicted pockets using AutoDock Vina (server-side module) and to interactively visualize the predicted poses (visualization module). In addition to introducing a modular architecture, we revamped PrankWeb’s interface to better support the modules and enhance user interaction between the 1D and 3D viewers. We introduced a new, faster P2Rank backend or user-friendly exports, including ChimeraX visualization.},
+    issn = {1362-4962},
+    doi = {10.1093/nar/gkaf421},
+    url = {https://doi.org/10.1093/nar/gkaf421},
+    eprint = {https://academic.oup.com/nar/advance-article-pdf/doi/10.1093/nar/gkaf421/63227728/gkaf421.pdf},
+}
+~~~
+
+
+* [Web-server article](https://doi.org/10.1093/nar/gkac389) about updates in the web interface [prankweb.cz](https://prankweb.cz)  
  Jakubec D, Skoda P, Krivak R, Novotny M, Hoksza D. ***PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures.*** Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W593–W597  
 ~~~bibtex
 @article{prankweb3,
