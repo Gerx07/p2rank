@@ -27,6 +27,10 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class Params {
 
+    Params() {
+        initDependentParams()
+    }
+
     public static Params INSTANCE = new Params()
 
     public static Params getInst() {
@@ -357,6 +361,12 @@ class Params {
      */
     @RuntimeParam // training
     int rf_threads = 0
+
+    /**
+     * number of threads used for per-protein feature computation (0=use value of threads param)
+     */
+    @RuntimeParam
+    int fe_threads = 1
 
     /**
      * size of a bag: 1..100% of the dataset
@@ -1462,8 +1472,13 @@ class Params {
         if (!parallel) {
             threads = 1
             rf_threads = 1
+            fe_threads = 1
         } else if (threads==1) {
             parallel = false
+        }
+
+        if (fe_threads <= 0) {
+            fe_threads = threads
         }
     }
 

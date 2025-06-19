@@ -26,11 +26,11 @@ public final class Atoms implements Iterable<Atom> {
 
     public final List<Atom> list;
 
-    // lazy fields
-    private Map<Integer, Atom> index;
-    private AtomKdTree kdTree;
-    private Atom centroid;
-    private Atom centerOfMass;
+    // lazy fields, may be initialized concurrently
+    private volatile Map<Integer, Atom> index;
+    private volatile AtomKdTree kdTree;
+    private volatile Atom centroid;
+    private volatile Atom centerOfMass;
 
     public Atoms() {
         list = new ArrayList<>();
@@ -92,9 +92,14 @@ public final class Atoms implements Iterable<Atom> {
 
     public Atoms withIndex() {
         if (index == null) {
-            index = new HashMap<>(list.size());
-            for (Atom a : list) {
-                index.put(a.getPDBserial(), a);
+            synchronized (this) {
+                if (index == null) {
+                    Map<Integer, Atom> tmp = new HashMap<>(list.size());
+                    for (Atom a : list) {
+                        tmp.put(a.getPDBserial(), a);
+                    }
+                    index = tmp;
+                }
             }
         }
         return this;
@@ -105,16 +110,26 @@ public final class Atoms implements Iterable<Atom> {
      */
     public Atoms withKdTreeConditional() {
         if (getCount() > KD_TREE_THRESHOLD) {
-            if (kdTree==null || kdTree.size()!=getCount()) {
-                buildKdTree();
+            AtomKdTree tree = kdTree;
+            if (tree == null || tree.size() != getCount()) {
+                synchronized (this) {
+                    tree = kdTree;
+                    if (tree == null || tree.size() != getCount()) {
+                        kdTree = AtomKdTree.build(this);
+                    }
+                }
             }
         }
         return this;
     }
 
     public Atoms withKdTree() {
-        if (kdTree==null) {
-            buildKdTree();
+        if (kdTree == null) {
+            synchronized (this) {
+                if (kdTree == null) {
+                    kdTree = AtomKdTree.build(this);
+                }
+            }
         }
         return this;
     }
@@ -122,7 +137,7 @@ public final class Atoms implements Iterable<Atom> {
     /**
      * @return builds KDTree
      */
-    public Atoms buildKdTree() {
+    public synchronized Atoms buildKdTree() {
         kdTree = AtomKdTree.build(this);
         return this;
     }
@@ -238,19 +253,33 @@ public final class Atoms implements Iterable<Atom> {
         if (list.isEmpty()) {
             return null;
         }
-        if (centerOfMass==null) {
-            Atom[] aa = new Atom[list.size()];
-            aa = list.toArray(aa);
-            centerOfMass = Calc.centerOfMass(aa);
+        Atom com = centerOfMass;
+        if (com == null) {
+            synchronized (this) {
+                com = centerOfMass;
+                if (com == null) {
+                    Atom[] aa = new Atom[list.size()];
+                    aa = list.toArray(aa);
+                    centerOfMass = Calc.centerOfMass(aa);
+                    com = centerOfMass;
+                }
+            }
         }
-        return centerOfMass;
+        return com;
     }
 
     public Atom getCentroid() {
-        if (centroid==null) {
-            centroid = calculateCentroid(list);
+        Atom c = centroid;
+        if (c == null) {
+            synchronized (this) {
+                c = centroid;
+                if (c == null) {
+                    centroid = calculateCentroid(list);
+                    c = centroid;
+                }
+            }
         }
-        return centroid;
+        return c;
     }
 
     public static Atom calculateCentroid(Collection<Atom> atoms) {

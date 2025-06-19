@@ -15,7 +15,9 @@ import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
+import groovyx.gpars.GParsPool
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
@@ -57,6 +59,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
      * @param prediction
      */
     @Override
+    @CompileStatic(TypeCheckingMode.SKIP)
     void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
         FeatureExtractor proteinExtractor = extractorFactory.createPrototypeForProtein(prediction.protein, context)
@@ -76,13 +79,15 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
             int n_points = extractor.sampledPoints.points.count
             labeledPoints = new ArrayList<>(n_points)
-            for (Atom point : extractor.sampledPoints.points) {
+            extractor.sampledPoints.points.each { Atom point ->
                 labeledPoints.add(new LabeledPoint(point))
             }
 
-            List<FeatureVector> vectors = new ArrayList<>(n_points)
-            for (LabeledPoint point : labeledPoints) {
-                vectors.add(extractor.calcFeatureVector(point.point))
+            List<FeatureVector> vectors
+            GParsPool.withPool(params.fe_threads) {
+                vectors = labeledPoints.collectParallel { LabeledPoint point ->
+                    extractor.calcFeatureVector(point.point)
+                } as List<FeatureVector>
             }
 
             // classification
@@ -129,6 +134,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
      * Rescore predictions of other methods
      * TODO refactor to use PointScoreCalculator
      */
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor, InstancePredictor instancePredictor) {
 
         proteinExtractor.prepareProteinPrototypeForPockets()
@@ -142,27 +148,26 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             double sum = 0
             double rawSum = 0
 
-            List<LabeledPoint> pocketLabeledPoints = new ArrayList<>(extractor.sampledPoints.points.count)
+            List<LabeledPoint> pocketLabeledPoints
+            GParsPool.withPool(params.fe_threads) {
+                pocketLabeledPoints = extractor.sampledPoints.points.collectParallel { Atom point ->
+                    FeatureVector vector = extractor.calcFeatureVector(point)
+                    double pointScore = instancePredictor.predictPositive(vector)
+                    boolean predicted = applyPointScoreThreshold(pointScore)
+                    boolean observed = false
+                    if (collectStats) {
+                        observed = isPositivePoint(point, ligandAtoms)
+                    }
+                    return new LabeledPoint(point, observed, predicted, pointScore)
+                } as List<LabeledPoint>
+            }
 
-            for (Atom point : extractor.sampledPoints.points) {
-
-                FeatureVector vector = extractor.calcFeatureVector(point)
-
-                // not all classifiers give histogram that sums up to 1
-                double pointScore = instancePredictor.predictPositive(vector)
-                boolean predicted = applyPointScoreThreshold(pointScore)
-                boolean observed = false
-
+            for (LabeledPoint lp : pocketLabeledPoints) {
                 if (collectStats) {
-                    observed = isPositivePoint(point, ligandAtoms)
-                    stats.addPrediction(observed, predicted, pointScore)
+                    stats.addPrediction(lp.observed, lp.predicted, lp.score)
                 }
-
-                pocketLabeledPoints.add(new LabeledPoint(point, observed, predicted, pointScore))
-
-                sum += calculator.transformScore(pointScore)
-
-                rawSum += pointScore // ~ P(ligandable)
+                sum += calculator.transformScore(lp.score)
+                rawSum += lp.score
             }
 
             if (collectPoints) {
