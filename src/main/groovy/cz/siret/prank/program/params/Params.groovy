@@ -366,7 +366,7 @@ class Params {
      * number of threads used for per-protein feature computation (0=use value of threads param)
      */
     @RuntimeParam
-    int fe_threads = 1
+    int fe_threads = 1 // default single-thread
 
     /**
      * size of a bag: 1..100% of the dataset
