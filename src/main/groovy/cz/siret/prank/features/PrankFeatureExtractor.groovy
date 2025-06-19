@@ -11,11 +11,14 @@ import cz.siret.prank.features.implementation.table.ResidueTableFeature
 import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import groovyx.gpars.GParsPool
+import java.util.concurrent.ConcurrentHashMap
 import cz.siret.prank.geom.samplers.PointSampler
 import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
@@ -52,7 +55,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     /**
      * Feature vectors that are first calculated for atoms and then (projected to SAS points)
      */
-    private Map<Integer, PrankFeatureVector> surfaceAtomVectors = new HashMap<>()
+    private Map<Integer, PrankFeatureVector> surfaceAtomVectors = new ConcurrentHashMap<>()
 
     /**
      * deep layer of atoms under the protein surface
@@ -262,12 +265,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 //===========================================================================================================//
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     void preCalculateVectorsForAtoms(Atoms atoms) {
         log.debug "pre-calculating vectors for {} atoms", atoms.count
-        
-        for (Atom a : atoms.list) {
-            FeatureVector p = calcAtomVector(a)
-            surfaceAtomVectors.put(a.PDBserial, p)
+        GParsPool.withPool(params.fe_threads) {
+            atoms.list.eachParallel { Atom a ->
+                FeatureVector p = calcAtomVector(a)
+                surfaceAtomVectors.put(a.PDBserial, p)
+            }
         }
     }
 
