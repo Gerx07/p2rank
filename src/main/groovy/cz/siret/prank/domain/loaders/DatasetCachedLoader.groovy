@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class DatasetCachedLoader implements Parametrized {
 
-    static Map<String, Dataset> cache = new HashMap<>()
+    static Map<String, Dataset> cache = new java.util.concurrent.ConcurrentHashMap<>()
 
     static Dataset loadDataset(String datasetFile) {
 

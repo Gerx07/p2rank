@@ -27,6 +27,10 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class Params {
 
+    Params() {
+        initDependentParams()
+    }
+
     public static Params INSTANCE = new Params()
 
     public static Params getInst() {
@@ -362,7 +366,7 @@ class Params {
      * number of threads used for per-protein feature computation (0=use value of threads param)
      */
     @RuntimeParam
-    int fe_threads = 0
+    int fe_threads = 1 // default single-thread
 
     /**
      * size of a bag: 1..100% of the dataset

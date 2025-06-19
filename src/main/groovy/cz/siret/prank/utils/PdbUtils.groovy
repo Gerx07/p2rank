@@ -9,6 +9,8 @@ import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.cif.CifStructureConverter
+import org.biojava.nbio.structure.chem.ChemCompGroupFactory
+import org.biojava.nbio.structure.chem.ReducedChemCompProvider
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
@@ -43,8 +45,11 @@ class PdbUtils {
      * Tries to disable BioJava fetching external information since it leads to inconsistent protein parsing.
      */
     private static void disableBiojavaFetching() {
-        // TODO Biojava6: find out if there is a new way to disable fetching
-        // ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
+        try {
+            ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
+        } catch (Exception ignored) {
+            // ignore, fallback to default provider
+        }
     }
 
     private static FileParsingParameters getParsingParams() {
